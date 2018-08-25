@@ -77,6 +77,24 @@ namespace ScoreTest
         }
         
         [Fact]
+        public void Calculate_Returns150()
+        {
+            var calculator = new ScoreCalculator();
+            var scoreArray = new List<ScoreInfo>();
+
+            for (int i = 1; i < 11; i++)
+            {
+                var frame = new ScoreInfo(i);
+                frame.Scores.Add(5);
+                frame.Scores.Add(5);
+                scoreArray.Add(frame);
+            }
+            
+            var totalScore = calculator.Calculate(scoreArray);
+            Assert.Equal(150, totalScore);
+        }
+
+        [Fact]
         public void Calculate_ThrowsArgumentException_WhenScoreIsNegative()
         {
             var calculator = new ScoreCalculator();
@@ -107,6 +125,77 @@ namespace ScoreTest
             frame.AddScore(6);
             
             Assert.Throws<ArgumentException>(() => frame.AddScore(1));    
+        }
+
+        [Fact]
+        public void ScoreInfo_SetsIsStrikeToTrue_WhenFrame1Totals10()
+        {
+            var frame1 = new ScoreInfo(1);
+            frame1.AddScore(10);
+
+            Assert.True(frame1.IsStrike);
+        }
+        
+        [Fact]
+        public void ScoreInfo_SetsIsSpareToTrue_WhenFrame1Totals10In2Attempts()
+        {
+            var frame1 = new ScoreInfo(1);
+            frame1.AddScore(5);
+            frame1.AddScore(5);
+
+            Assert.True(frame1.IsSpare);
+        }
+        
+        [Fact]
+        public void ScoreInfo_SetsIsSpareAndIsStrike_WhenFrame1TotalsLessThan10In2Attempts()
+        {
+            var frame1 = new ScoreInfo(1);
+            frame1.AddScore(3);
+            frame1.AddScore(4);
+
+            Assert.False(frame1.IsSpare);
+            Assert.False(frame1.IsStrike);
+        }
+        
+        [Fact]
+        public void Calculate_CorrectTotalScoreWhenIsSpare()
+        {
+            var calculator = new ScoreCalculator();
+            var scoreArray = new List<ScoreInfo>();
+
+            var frame1 = new ScoreInfo(1);
+            frame1.AddScore(9);
+            frame1.AddScore(1);
+
+            var frame2 = new ScoreInfo(2);
+            frame2.AddScore(2);
+
+            scoreArray.Add(frame1);
+            scoreArray.Add(frame2);
+
+            var total = calculator.Calculate(scoreArray);
+            Assert.True(total == 14);
+        }
+        
+        [Fact]
+        public void Calculate_CorrectTotalScoreWhenIsSpare14()
+        {
+            var calculator = new ScoreCalculator();
+            var scoreArray = new List<ScoreInfo>();
+
+            for (int i = 1; i < 3; i++)
+            {
+                var frame = new ScoreInfo(i);
+                frame.AddScore(4);
+                frame.AddScore(6);
+                scoreArray.Add(frame);
+            }
+
+            // 1 = 10 + 4
+            // 2 = 10
+
+            var total = calculator.Calculate(scoreArray);
+            Assert.True(total == 24);
         }
     }
 }
