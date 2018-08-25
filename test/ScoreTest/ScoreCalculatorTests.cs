@@ -65,30 +65,66 @@ namespace ScoreTest
             var calculator = new ScoreCalculator();
             var scoreArray = new List<ScoreInfo>();
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 1; i < 10; i++)
             {
-                var frame = new ScoreInfo();
-                frame.Scores.Add(10);
+                var frame = new ScoreInfo(i);
+                frame.AddScore(10);
                 scoreArray.Add(frame);
             }
+
+            var lastframe = new ScoreInfo(10);
+            lastframe.AddScore(10);
+            lastframe.AddScore(10);
+            lastframe.AddScore(10);
+            scoreArray.Add(lastframe);
             
             var score = calculator.Calculate(scoreArray);
-            //Assert.Equal(300, score);
+            Assert.Equal(300, score);
         }
         
         [Fact]
-        public void Calculate_Returns150()
+        public void Calculate_Returns75()
         {
             var calculator = new ScoreCalculator();
             var scoreArray = new List<ScoreInfo>();
 
-            for (int i = 1; i < 11; i++)
+            for (int i = 1; i < 10; i++)
             {
                 var frame = new ScoreInfo(i);
-                frame.Scores.Add(5);
-                frame.Scores.Add(5);
+                frame.AddScore(5);
                 scoreArray.Add(frame);
             }
+
+            var lastframe = new ScoreInfo(10);
+            lastframe.AddScore(10);
+            lastframe.AddScore(10);
+            lastframe.AddScore(10);
+            scoreArray.Add(lastframe);
+            
+            var score = calculator.Calculate(scoreArray);
+            Assert.Equal(75, score);
+        }
+
+        [Fact]
+        public void Calculate_Returns145()
+        {
+            var calculator = new ScoreCalculator();
+            var scoreArray = new List<ScoreInfo>();
+
+            for (int i = 1; i < 10; i++)
+            {
+                var frame = new ScoreInfo(i);
+                frame.AddScore(5);
+                frame.AddScore(5);
+                scoreArray.Add(frame);
+            }
+
+            // last frame 
+            var lastFrame = new ScoreInfo(10);
+            lastFrame.AddScore(5);
+            lastFrame.AddScore(5);
+            lastFrame.AddScore(5);
+            scoreArray.Add(lastFrame);
             
             var totalScore = calculator.Calculate(scoreArray);
             Assert.Equal(150, totalScore);
@@ -196,6 +232,34 @@ namespace ScoreTest
 
             var total = calculator.Calculate(scoreArray);
             Assert.True(total == 24);
+        }
+        
+        [Fact]
+        public void Calculate_CorrectlyWith1StrikeAnd1Spare()
+        {
+            var calculator = new ScoreCalculator();
+            var scoreArray = new List<ScoreInfo>();
+
+            var spare = new ScoreInfo(1);
+            spare.AddScore(4);
+            spare.AddScore(6);
+            scoreArray.Add(spare);
+            
+            var strike = new ScoreInfo(2);
+            strike.AddScore(10);
+            scoreArray.Add(strike);
+            
+            var lastFrame = new ScoreInfo(3);
+            lastFrame.AddScore(3);
+            lastFrame.AddScore(2);
+            scoreArray.Add(lastFrame);
+
+            // 1 = 10 + 10
+            // 2 = 10 + 3 + 2
+            // 3 = 3 + 2
+
+            var total = calculator.Calculate(scoreArray);
+            Assert.True(total == 40);
         }
     }
 }
