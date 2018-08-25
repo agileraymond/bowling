@@ -129,69 +129,6 @@ namespace ScoreTest
             var totalScore = calculator.Calculate(scoreArray);
             Assert.Equal(150, totalScore);
         }
-
-        [Fact]
-        public void Calculate_ThrowsArgumentException_WhenScoreIsNegative()
-        {
-            var calculator = new ScoreCalculator();
-            var scoreArray = new List<ScoreInfo>();
-
-            var frame = new ScoreInfo();
-            Assert.Throws<ArgumentException>(() => frame.AddScore(-1));
-        }
-        
-        [Fact]
-        public void Calculate_ThrowsArgumentException_WhenScoreIsGreaterThanTen()
-        {
-            var calculator = new ScoreCalculator();
-            var scoreArray = new List<ScoreInfo>();
-
-            var frame = new ScoreInfo();
-            Assert.Throws<ArgumentException>(() => frame.AddScore(11));
-        }
-        
-        [Fact]
-        public void Calculate_ThrowsArgumentException_WhenAdding3ScoresToFrame1()
-        {
-            var calculator = new ScoreCalculator();
-            var scoreArray = new List<ScoreInfo>();
-
-            var frame = new ScoreInfo(1);
-            frame.AddScore(4);
-            frame.AddScore(6);
-            
-            Assert.Throws<ArgumentException>(() => frame.AddScore(1));    
-        }
-
-        [Fact]
-        public void ScoreInfo_SetsIsStrikeToTrue_WhenFrame1Totals10()
-        {
-            var frame1 = new ScoreInfo(1);
-            frame1.AddScore(10);
-
-            Assert.True(frame1.IsStrike);
-        }
-        
-        [Fact]
-        public void ScoreInfo_SetsIsSpareToTrue_WhenFrame1Totals10In2Attempts()
-        {
-            var frame1 = new ScoreInfo(1);
-            frame1.AddScore(5);
-            frame1.AddScore(5);
-
-            Assert.True(frame1.IsSpare);
-        }
-        
-        [Fact]
-        public void ScoreInfo_SetsIsSpareAndIsStrike_WhenFrame1TotalsLessThan10In2Attempts()
-        {
-            var frame1 = new ScoreInfo(1);
-            frame1.AddScore(3);
-            frame1.AddScore(4);
-
-            Assert.False(frame1.IsSpare);
-            Assert.False(frame1.IsStrike);
-        }
         
         [Fact]
         public void Calculate_CorrectTotalScoreWhenIsSpare()
@@ -236,6 +173,34 @@ namespace ScoreTest
         
         [Fact]
         public void Calculate_CorrectlyWith1StrikeAnd1Spare()
+        {
+            var calculator = new ScoreCalculator();
+            var scoreArray = new List<ScoreInfo>();
+
+            var strike = new ScoreInfo(1);
+            strike.AddScore(10);
+            scoreArray.Add(strike);
+            
+            var spare = new ScoreInfo(2);
+            spare.AddScore(4);
+            spare.AddScore(6);
+            scoreArray.Add(spare);
+            
+            var lastFrame = new ScoreInfo(3);
+            lastFrame.AddScore(3);
+            lastFrame.AddScore(2);
+            scoreArray.Add(lastFrame);
+
+            // 1 = 10 + 4 + 6 = 20
+            // 2 = 4 + 6 + 3 = 13
+            // 3 = 3 + 2 = 5
+
+            var total = calculator.Calculate(scoreArray);
+            Assert.Equal(38, total);
+        }
+
+        [Fact]
+        public void Calculate_CorrectlyWithSpareAndStrike()
         {
             var calculator = new ScoreCalculator();
             var scoreArray = new List<ScoreInfo>();
